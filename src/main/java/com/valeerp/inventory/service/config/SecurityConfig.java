@@ -30,11 +30,14 @@ import java.util.stream.Collectors;
 public class SecurityConfig {
 
     private final String rolesClaim;
+    private final String allowedOriginPatterns;
     private final IntegrationAuthFilter integrationAuthFilter;
 
     public SecurityConfig(@Value("${valeerp.security.roles-claim}") String rolesClaim,
+                          @Value("${valeerp.cors.allowed-origin-patterns}") String allowedOriginPatterns,
                           IntegrationAuthFilter integrationAuthFilter) {
         this.rolesClaim = rolesClaim;
+        this.allowedOriginPatterns = allowedOriginPatterns;
         this.integrationAuthFilter = integrationAuthFilter;
     }
 
@@ -106,7 +109,10 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:4000", "http://localhost:8081"));
+        configuration.setAllowedOriginPatterns(List.of(allowedOriginPatterns.split(",")).stream()
+                .map(String::trim)
+                .filter(pattern -> !pattern.isEmpty())
+                .toList());
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
