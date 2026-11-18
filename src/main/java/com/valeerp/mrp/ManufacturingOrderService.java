@@ -55,6 +55,13 @@ public class ManufacturingOrderService {
     }
 
     @Transactional(readOnly = true)
+    public List<Response> listAll() {
+        return orderRepository.findAllByOrderByIdDesc().stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public Response get(Long id) {
         return toResponse(requireWithLines(id));
     }

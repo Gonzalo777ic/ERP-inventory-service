@@ -42,6 +42,13 @@ public class BomService {
     }
 
     @Transactional(readOnly = true)
+    public List<Response> listAll() {
+        return bomRepository.findAllByOrderByCodeAsc().stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public Response get(Long id) {
         return toResponse(requireWithLines(id));
     }

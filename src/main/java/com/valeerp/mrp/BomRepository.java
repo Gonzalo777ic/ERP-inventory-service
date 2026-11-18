@@ -13,6 +13,8 @@ public interface BomRepository extends JpaRepository<BillOfMaterials, Long> {
 
     List<BillOfMaterials> findByProductIdOrderByCodeAsc(Long productId);
 
+    List<BillOfMaterials> findAllByOrderByCodeAsc();
+
     @Query("""
             SELECT b FROM BillOfMaterials b
             LEFT JOIN FETCH b.lines

@@ -31,7 +31,10 @@ public class BomController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR', 'ROLE_AUDITOR')")
-    public List<Response> list(@RequestParam Long productId) {
+    public List<Response> list(@RequestParam(required = false) Long productId) {
+        if (productId == null) {
+            return bomService.listAll();
+        }
         return bomService.listByProduct(productId);
     }
 

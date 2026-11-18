@@ -29,7 +29,10 @@ public class CycleCountController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR', 'ROLE_AUDITOR')")
-    public List<CycleCountResponse> list(@RequestParam Long companyId) {
+    public List<CycleCountResponse> list(@RequestParam(required = false) Long companyId) {
+        if (companyId == null) {
+            return cycleCountService.listAll();
+        }
         return cycleCountService.listByCompany(companyId);
     }
 

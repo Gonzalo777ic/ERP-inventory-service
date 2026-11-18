@@ -57,6 +57,13 @@ public class CycleCountService {
     }
 
     @Transactional(readOnly = true)
+    public List<CycleCountResponse> listAll() {
+        return cycleCountRepository.findAllByOrderByCreatedAtDesc().stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public CycleCountResponse get(Long id) {
         return toResponse(requireCount(id));
     }

@@ -10,6 +10,8 @@ public interface PickingRepository extends JpaRepository<Picking, Long> {
 
     List<Picking> findByCompanyIdOrderByCreatedAtDesc(Long companyId);
 
+    List<Picking> findAllByOrderByCreatedAtDesc();
+
     List<Picking> findBySourceWarehouseIdOrderByCreatedAtDesc(Long warehouseId);
 
     List<Picking> findByStatusOrderByCreatedAtDesc(PickingStatus status);

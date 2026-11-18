@@ -28,7 +28,10 @@ public class ManufacturingOrderController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR', 'ROLE_AUDITOR')")
-    public List<Response> list(@RequestParam Long warehouseId) {
+    public List<Response> list(@RequestParam(required = false) Long warehouseId) {
+        if (warehouseId == null) {
+            return manufacturingOrderService.listAll();
+        }
         return manufacturingOrderService.listByWarehouse(warehouseId);
     }
 

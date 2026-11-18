@@ -13,6 +13,8 @@ public interface ManufacturingOrderRepository extends JpaRepository<Manufacturin
 
     List<ManufacturingOrder> findByWarehouseIdOrderByIdDesc(Long warehouseId);
 
+    List<ManufacturingOrder> findAllByOrderByIdDesc();
+
     List<ManufacturingOrder> findByProductIdOrderByIdDesc(Long productId);
 
     @Query("""

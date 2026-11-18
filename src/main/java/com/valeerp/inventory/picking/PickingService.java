@@ -63,6 +63,13 @@ public class PickingService {
     }
 
     @Transactional(readOnly = true)
+    public List<PickingResponse> listAll() {
+        return pickingRepository.findAllByOrderByCreatedAtDesc().stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public PickingResponse get(Long id) {
         return toResponse(requirePicking(id));
     }

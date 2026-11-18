@@ -29,7 +29,10 @@ public class PickingController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_VENDOR', 'ROLE_AUDITOR')")
-    public List<PickingResponse> list(@RequestParam Long companyId) {
+    public List<PickingResponse> list(@RequestParam(required = false) Long companyId) {
+        if (companyId == null) {
+            return pickingService.listAll();
+        }
         return pickingService.listByCompany(companyId);
     }
 
