@@ -29,7 +29,8 @@ public final class CatalogProductDtos {
             CostingMethod costingMethod,
             MoneyDto standardCost,
             MoneyDto averageCost,
-            MoneyDto valuationCost
+            MoneyDto valuationCost,
+            String imageUrl
     ) {
     }
 

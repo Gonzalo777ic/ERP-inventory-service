@@ -1,11 +1,13 @@
 package com.valeerp.catalog;
 
 import com.valeerp.inventory.service.model.Product;
+import com.valeerp.inventory.service.model.ProductImage;
 import com.valeerp.inventory.service.model.ProductVariant;
 import com.valeerp.inventory.service.model.ProductVariantAttribute;
 import com.valeerp.inventory.service.repository.BrandRepository;
 import com.valeerp.inventory.service.repository.CategoryRepository;
 import com.valeerp.inventory.service.repository.ProductAttributeRepository;
+import com.valeerp.inventory.service.repository.ProductImageRepository;
 import com.valeerp.inventory.service.repository.ProductRepository;
 import com.valeerp.inventory.service.repository.ProductVariantRepository;
 import com.valeerp.inventory.service.repository.UnitOfMeasureRepository;
@@ -28,7 +30,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Catálogo: productos (tipos Odoo) y variantes con SKU. Sin mutar stock físico.
@@ -37,6 +41,7 @@ import java.util.Set;
 public class CatalogProductService {
 
     private final ProductRepository productRepository;
+    private final ProductImageRepository imageRepository;
     private final ProductVariantRepository variantRepository;
     private final ProductAttributeRepository attributeRepository;
     private final BrandRepository brandRepository;
@@ -45,6 +50,7 @@ public class CatalogProductService {
     private final Clock clock;
 
     public CatalogProductService(ProductRepository productRepository,
+                                 ProductImageRepository imageRepository,
                                  ProductVariantRepository variantRepository,
                                  ProductAttributeRepository attributeRepository,
                                  BrandRepository brandRepository,
@@ -52,6 +58,7 @@ public class CatalogProductService {
                                  UnitOfMeasureRepository unitOfMeasureRepository,
                                  Clock clock) {
         this.productRepository = productRepository;
+        this.imageRepository = imageRepository;
         this.variantRepository = variantRepository;
         this.attributeRepository = attributeRepository;
         this.brandRepository = brandRepository;
@@ -62,12 +69,17 @@ public class CatalogProductService {
 
     @Transactional(readOnly = true)
     public List<ProductResponse> listAll() {
-        return productRepository.findAll().stream().map(this::toResponse).toList();
+        Map<Long, String> mainImages = imageRepository.findByMainTrue().stream()
+                .collect(Collectors.toMap(ProductImage::getProductId, ProductImage::getImageUrl, (left, right) -> left));
+        return productRepository.findAll().stream()
+                .map(product -> toResponse(product, mainImages.get(product.getId())))
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public ProductResponse get(Long id) {
-        return toResponse(requireProduct(id));
+        Product product = requireProduct(id);
+        return toResponse(product, mainImageUrl(product.getId()));
     }
 
     @Transactional
@@ -259,6 +271,10 @@ public class CatalogProductService {
     }
 
     private ProductResponse toResponse(Product product) {
+        return toResponse(product, mainImageUrl(product.getId()));
+    }
+
+    private ProductResponse toResponse(Product product, String imageUrl) {
         return new ProductResponse(
                 product.getId(),
                 product.getSku(),
@@ -273,8 +289,15 @@ public class CatalogProductService {
                 product.getCostingMethod(),
                 moneyDto(product.getStandardCost()),
                 moneyDto(product.getAverageCost()),
-                moneyDto(product.valuationCost())
+                moneyDto(product.valuationCost()),
+                imageUrl
         );
+    }
+
+    private String mainImageUrl(Long productId) {
+        return imageRepository.findByProductIdAndMainTrue(productId)
+                .map(ProductImage::getImageUrl)
+                .orElse(null);
     }
 
     private VariantResponse toVariantResponse(ProductVariant variant) {

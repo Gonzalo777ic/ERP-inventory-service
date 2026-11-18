@@ -67,6 +67,15 @@ public class ProductMediaService {
     }
 
     @Transactional
+    public ImageResponse markMain(Long imageId) {
+        ProductImage image = imageRepository.findById(imageId)
+                .orElseThrow(() -> new DomainException("Imagen no encontrada: " + imageId));
+        clearMain(image.getProductId());
+        image.markAsMain();
+        return toImageResponse(imageRepository.save(image));
+    }
+
+    @Transactional
     public void retireImage(Long imageId) {
         ProductImage image = imageRepository.findById(imageId)
                 .orElseThrow(() -> new DomainException("Imagen no encontrada: " + imageId));

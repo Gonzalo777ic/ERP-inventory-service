@@ -27,7 +27,7 @@ public class ProductImage extends SoftDeletable {
     @Column(name = "variant_id")
     private Long variantId;
 
-    @Column(name = "image_url", nullable = false, length = 500)
+    @Column(name = "image_url", nullable = false, length = 2048)
     private String imageUrl;
 
     @Column(name = "storage_path", length = 500)
