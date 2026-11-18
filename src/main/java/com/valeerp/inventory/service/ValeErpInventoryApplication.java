@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication(scanBasePackages = {"com.valeerp.inventory.service", "com.valeerp"})
-@EntityScan(basePackages = {"com.valeerp.inventory.service", "com.valeerp"})
-@EnableJpaRepositories(basePackages = {"com.valeerp.inventory.service", "com.valeerp"})
+@SpringBootApplication(scanBasePackages = "com.valeerp")
+@EntityScan(basePackages = "com.valeerp")
+@EnableJpaRepositories(basePackages = "com.valeerp")
 public class ValeErpInventoryApplication {
 
     public static void main(String[] args) {
